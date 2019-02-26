@@ -1,0 +1,53 @@
+"""
+
+Copyright (C) 2019 Louis Jean, Maxence Hanin
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+
+
+from unittest import TestCase
+from automaton import machines
+import pokematon as pkm
+
+
+def create_test_dfa():
+    """
+    Create a Deterministic Finite Automaton for testing purpose.
+    
+    Returns: a tuple (dfa, alphabet)
+    """
+    
+    dfa = machines.FiniteMachine()
+    dfa.add_state("1")
+    dfa.add_state("2")
+    dfa.add_state("3");
+    dfa.add_state("4");
+    dfa.add_state("5", terminal=True);
+    dfa.add_state("6", terminal=True);
+    
+    dfa.add_transition("1", "2", "a")
+    dfa.add_transition("1", "3", "b")
+    
+    # TODO end
+    return dfa, list('a', 'b', 'c')
+    
+class PokematonTest(TestCase):
+    def setUp(self):
+        pass
+        
+    def test_automatons_of_size(self):
+        pass
+    

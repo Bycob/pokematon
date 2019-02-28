@@ -1,1 +1,1 @@
-automaton=1.15.0
+automata-lib

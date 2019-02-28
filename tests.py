@@ -19,9 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 from unittest import TestCase
-from automaton import machines
+from automata.fa.nfa import NFA
 import pokematon as pkm
-
 
 def create_test_dfa():
     """
@@ -42,12 +41,23 @@ def create_test_dfa():
     dfa.add_transition("1", "3", "b")
     
     # TODO end
-    return dfa, list('a', 'b', 'c')
+    return dfa, ['a', 'b', 'c']
+    
+def print_automaton(automaton):
+    print("states: ", automaton.states)
+    print("final states:", automaton.final_states)
+    print("transitions: ", automaton.transitions, "\n")
     
 class PokematonTest(TestCase):
     def setUp(self):
         pass
         
     def test_automatons_of_size(self):
-        pass
+        c = 0
+        for automaton in pkm.automatons_of_size({'a', 'b'}, 2):
+            c += 1
+            # print_automaton(automaton)
+            automaton.validate()
+        
+        self.assertEqual(c, 768)
     

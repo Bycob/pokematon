@@ -29,6 +29,7 @@ with the minimal number of states.
 """
 
 from automata.fa.nfa import NFA
+from automata.fa.dfa import DFA
 
 import copy
 
@@ -96,17 +97,34 @@ def automatons_of_size(alphabet, size):
                 yield possible_graph
 
 
+"""
+give the subset of an undeterministic automaton state
+"""
+def powerset(state):
+        res =[[]]
+        for s in state:
+            newsub = [subset + [s] for subset in res]
+            res.extend(newsub)
+        return res
+
+
 def convert_to_dfa(automaton):
     """
     Convert an undeterministic automaton to a deterministic one.
     """
-    pass
-    
+    return NFA.from_dfa(automaton)
+
 def get_complementary(automaton):
-    """
-    Get the complementary automaton of this one
-    """
-    pass
+    temp_complementary = convert_to_dfa(automaton)
+    temp_final_state = list(set(complementary.states) - set(complementary.final_states)- set(complementary.initial_states))
+    complementary = DFA(
+        states=temp_complementary.states,
+        input_symbols=temp_complementary.input_symbols,
+        transitions=temp_complementary.transitions,
+        initial_state=temp_complementary.initial_state,
+        final_states=temp_final_state
+    )
+    return complementary
     
 # Louis
 def is_intersection_empty(dfa1, dfa2):

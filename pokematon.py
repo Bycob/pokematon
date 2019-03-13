@@ -33,6 +33,9 @@ from automata.fa.dfa import DFA
 
 import copy
 
+class AutomatonNotFound(Exception):
+    pass
+
 def create_nfa(size, alphabet={}):
     states = set()
     transitions = {}
@@ -97,22 +100,22 @@ def automatons_of_size(alphabet, size):
                 yield possible_graph
 
 
-"""
-give the subset of an undeterministic automaton state
-"""
 def powerset(state):
-        res =[[]]
-        for s in state:
-            newsub = [subset + [s] for subset in res]
-            res.extend(newsub)
-        return res
+    """
+    give the subset of an undeterministic automaton state
+    """
+    res =[[]]
+    for s in state:
+        newsub = [subset + [s] for subset in res]
+        res.extend(newsub)
+    return res
 
 
 def convert_to_dfa(automaton):
     """
     Convert an undeterministic automaton to a deterministic one.
     """
-    return NFA.from_dfa(automaton)
+    return DFA.from_nfa(automaton)
 
 def get_complementary(automaton):
     temp_complementary = convert_to_dfa(automaton)
@@ -132,4 +135,54 @@ def is_intersection_empty(dfa1, dfa2):
     Check wether the intersection of the two automaton is empty or not
     """
     return False
+
+def are_isomorphic(dfa1, dfa2):
+    """
+    Check if 2 DFA are isomorph
+    """
+    if len(dfa1.states) != len(dfa2.states):
+        return False
+    
+    sim_states = { dfa1.initial_state: dfa2.initial_state }
+    next_states = { dfa1.initial_state }
+    explored_states = set()
+    
+    # Check if transitions are isomorph
+    while len(next_states) > 0:
+        current_state = next_states.pop()
+        current_state2 = sim_states[current_state]
+        
+        for (label, dst) in dfa1.transitions[current_state].items():
+            dst2 = dfa2.transitions[current_state2][label]
+            
+            if dst in sim_states:
+                if dst2 != sim_states[dst]:
+                    return False
+            else:
+                next_states.add(dst)
+                sim_states[dst] = dst2
+        
+        explored_states.add(current_state)
+    
+    # Check final states
+    for state1, state2 in sim_states:
+        if (state1 in dfa1.final_states) != (state2 in dfa2.final_states):
+            return False
+    
+    return True
+    
+def get_minimal_nfa(dfa):
+    """
+    This is the core function of the project. Returns a NFA with
+    the minimal number of states, that corresponds to this DFA.
+    """
+    for i in range(2, len(dfa.states) + 1):
+        for nfa in automatons_of_size(dfa.input_symbols, i):
+            test_dfa = convert_to_dfa(nfa)
+            min_dfa = test_dfa.minify()
+            
+            if (dfa == test_dfa):
+                return nfa
+                
+    raise AutomatonNotFound("The minimal automaton was not found. This is probably a bug.")
     
